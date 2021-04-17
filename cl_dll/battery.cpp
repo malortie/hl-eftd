@@ -22,8 +22,8 @@
 #include "cl_util.h"
 #include "parsemsg.h"
 
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
 
 #if defined ( EFTD_CLIENT_DLL )
 #define ARMOR_BAR_LEFT		40
@@ -159,7 +159,7 @@ int CHudBattery::Draw(float flTime)
 
 	rc.top  += m_iHeight * ((float)(m_iBatMax-(min(m_iBatMax,m_iBat))) * fScale); // battery can go from 0 to m_iBatMax so * fScale goes from 0 to 1
 #else
-	rc.top  += m_iHeight * ((float)(100-(min(100,m_iBat))) * 0.01);	// battery can go from 0 to 100 so * 0.01 goes from 0 to 1
+	rc.top  += m_iHeight * ((float)(100-(std::min(100,m_iBat))) * 0.01);	// battery can go from 0 to 100 so * 0.01 goes from 0 to 1
 #endif
 
 	UnpackRGB(r,g,b, RGB_YELLOWISH);

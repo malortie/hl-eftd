@@ -352,10 +352,8 @@ public:
 	int ammo_uranium;
 	int ammo_hornets;
 	int ammo_argrens;
-#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 	int ammo_ak47;
 	int ammo_mac10;
-#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 	//Special stuff for grenades and satchels.
 	float m_flStartThrow;
 	float m_flReleaseThrow;

@@ -448,7 +448,6 @@ cvar_t	sk_player_leg1	= { "sk_player_leg1","1" };
 cvar_t	sk_player_leg2	= { "sk_player_leg2","1" };
 cvar_t	sk_player_leg3	= { "sk_player_leg3","1" };
 
-#if defined ( EFTD_DLL )
 // Diablo
 cvar_t	sk_diablo_health1 = { "sk_diablo_health1", "0" };
 cvar_t	sk_diablo_health2 = { "sk_diablo_health2", "0" };
@@ -486,7 +485,6 @@ cvar_t	sk_hvmg_bullet3 = { "sk_hvmg_bullet3", "0" };
 cvar_t	sk_mac10_bullet1 = { "sk_mac10_bullet1", "0" };
 cvar_t	sk_mac10_bullet2 = { "sk_mac10_bullet2", "0" };
 cvar_t	sk_mac10_bullet3 = { "sk_mac10_bullet3", "0" };
-#endif // defined ( EFTD_DLL )
 // END Cvars for Skill Level settings
 
 // Register your console variables here
@@ -922,7 +920,6 @@ void GameDLLInit( void )
 	CVAR_REGISTER ( &sk_player_leg1 );
 	CVAR_REGISTER ( &sk_player_leg2 );
 	CVAR_REGISTER ( &sk_player_leg3 );
-#if defined ( EFTD_DLL )
 	// Diablo
 	CVAR_REGISTER(&sk_diablo_health1);
 	CVAR_REGISTER(&sk_diablo_health2);
@@ -961,7 +958,6 @@ void GameDLLInit( void )
 	CVAR_REGISTER(&sk_mac10_bullet1);
 	CVAR_REGISTER(&sk_mac10_bullet2);
 	CVAR_REGISTER(&sk_mac10_bullet3);
-#endif // defined ( EFTD_DLL )
 // END REGISTER CVARS FOR SKILL LEVEL STUFF
 
 	SERVER_COMMAND( "exec skill.cfg\n" );

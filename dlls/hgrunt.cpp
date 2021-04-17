@@ -46,9 +46,7 @@ int g_fGruntQuestion;				// true if an idle grunt asked a question. Cleared when
 
 extern DLL_GLOBAL int		g_iSkillLevel;
 
-#if defined ( EFTD_DLL )
 BOOL IsCurrentLevelTraining( void );
-#endif // EFTD_DLL
 //=========================================================
 // monster-specific DEFINE's
 //=========================================================
@@ -65,31 +63,23 @@ BOOL IsCurrentLevelTraining( void );
 #define HGRUNT_HANDGRENADE			( 1 << 1)
 #define HGRUNT_GRENADELAUNCHER		( 1 << 2)
 #define HGRUNT_SHOTGUN				( 1 << 3)
-#if defined ( EFTD_DLL )
 #define HGRUNT_AK47					( 1 << 0)
 #define HGRUNT_MAC10				( 1 << 3)
-#endif // defined ( EFTD_DLL )
 
 #define HEAD_GROUP					1
 #define HEAD_GRUNT					0
 #define HEAD_COMMANDER				1
 #define HEAD_SHOTGUN				2
 #define HEAD_M203					3
-#if defined ( EFTD_DLL )
 #define HEAD_ARCTIC					0
-#endif // defined ( EFTD_DLL )
 #define GUN_GROUP					2
 #define GUN_MP5						0
 #define GUN_SHOTGUN					1
 #define GUN_NONE					2
-#if defined ( EFTD_DLL )
 #define GUN_AK47					0
 #define GUN_MAC10					1
-#endif // defined ( EFTD_DLL )
 
-#if defined ( EFTD_DLL )
 #define GF_SNOWGRUNT				1
-#endif // defined ( EFTD_DLL )
 
 //=========================================================
 // Monster's Anim Events Go Here
@@ -159,14 +149,10 @@ public:
 	void PainSound( void );
 	void IdleSound ( void );
 	Vector GetGunPosition( void );
-#if defined ( EFTD_DLL )
 	void Shoot(Vector vecSpread, int iBulletType);
 	void ShootMP5( Vector vecSpread );
 	void ShootAK47( Vector vecSpread );
 	void ShootMac10( Vector vecSpread );
-#else
-	void Shoot ( void );
-#endif // defined ( EFTD_DLL )
 	void Shotgun ( void );
 	void PrescheduleThink ( void );
 	void GibMonster( void );
@@ -210,11 +196,9 @@ public:
 	int		m_iSentence;
 
 	static const char *pGruntSentences[];
-#if defined ( EFTD_DLL )
 	BOOL	IsSnowGrunt() const;
 
 	int		m_iGruntFlags;
-#endif // defined ( EFTD_DLL )
 };
 
 LINK_ENTITY_TO_CLASS( monster_human_grunt, CHGrunt );
@@ -233,9 +217,7 @@ TYPEDESCRIPTION	CHGrunt::m_SaveData[] =
 //  DEFINE_FIELD( CShotgun, m_iBrassShell, FIELD_INTEGER ),
 //  DEFINE_FIELD( CShotgun, m_iShotgunShell, FIELD_INTEGER ),
 	DEFINE_FIELD( CHGrunt, m_iSentence, FIELD_INTEGER ),
-#if defined ( EFTD_DLL )
 	DEFINE_FIELD( CHGrunt, m_iGruntFlags, FIELD_INTEGER ),
-#endif // defined ( EFTD_DLL )
 };
 
 IMPLEMENT_SAVERESTORE( CHGrunt, CSquadMonster );
@@ -317,7 +299,6 @@ void CHGrunt :: GibMonster ( void )
 		GetAttachment( 0, vecGunPos, vecGunAngles );
 		
 		CBaseEntity *pGun;
-#if defined ( EFTD_DLL )
 		if ( !IsSnowGrunt() )
 		{
 			if (FBitSet(pev->weapons, HGRUNT_SHOTGUN))
@@ -355,31 +336,6 @@ void CHGrunt :: GibMonster ( void )
 			pGun->pev->velocity = Vector (RANDOM_FLOAT(-100,100), RANDOM_FLOAT(-100,100), RANDOM_FLOAT(200,300));
 			pGun->pev->avelocity = Vector ( 0, RANDOM_FLOAT( 200, 400 ), 0 );
 		}
-#else
-		if (FBitSet( pev->weapons, HGRUNT_SHOTGUN ))
-		{
-			pGun = DropItem( "weapon_shotgun", vecGunPos, vecGunAngles );
-		}
-		else
-		{
-			pGun = DropItem( "weapon_9mmAR", vecGunPos, vecGunAngles );
-		}
-		if ( pGun )
-		{
-			pGun->pev->velocity = Vector (RANDOM_FLOAT(-100,100), RANDOM_FLOAT(-100,100), RANDOM_FLOAT(200,300));
-			pGun->pev->avelocity = Vector ( 0, RANDOM_FLOAT( 200, 400 ), 0 );
-		}
-	
-		if (FBitSet( pev->weapons, HGRUNT_GRENADELAUNCHER ))
-		{
-			pGun = DropItem( "ammo_ARgrenades", vecGunPos, vecGunAngles );
-			if ( pGun )
-			{
-				pGun->pev->velocity = Vector (RANDOM_FLOAT(-100,100), RANDOM_FLOAT(-100,100), RANDOM_FLOAT(200,300));
-				pGun->pev->avelocity = Vector ( 0, RANDOM_FLOAT( 200, 400 ), 0 );
-			}
-		}
-#endif // defined ( EFTD_DLL )
 	}
 
 	CBaseMonster :: GibMonster();
@@ -403,10 +359,8 @@ int CHGrunt :: ISoundMask ( void )
 //=========================================================
 BOOL CHGrunt :: FOkToSpeak( void )
 {
-#if defined ( EFTD_DLL )
 	if ( IsCurrentLevelTraining() )
 		return FALSE;
-#endif // defined ( EFTD_DLL )
 // if someone else is talking, don't speak
 	if (gpGlobals->time <= CTalkMonster::g_talkWaitTime)
 		return FALSE;
@@ -861,11 +815,7 @@ Vector CHGrunt :: GetGunPosition( )
 //=========================================================
 // Shoot
 //=========================================================
-#if defined ( EFTD_DLL )
 void CHGrunt :: Shoot ( Vector vecSpread, int iBulletType )
-#else
-void CHGrunt :: Shoot ( void )
-#endif // defined ( EFTD_DLL )
 {
 	if (m_hEnemy == NULL)
 	{
@@ -879,11 +829,7 @@ void CHGrunt :: Shoot ( void )
 
 	Vector	vecShellVelocity = gpGlobals->v_right * RANDOM_FLOAT(40,90) + gpGlobals->v_up * RANDOM_FLOAT(75,200) + gpGlobals->v_forward * RANDOM_FLOAT(-40, 40);
 	EjectBrass ( vecShootOrigin - vecShootDir * 24, vecShellVelocity, pev->angles.y, m_iBrassShell, TE_BOUNCE_SHELL); 
-#if defined ( EFTD_DLL )
 	FireBullets(1, vecShootOrigin, vecShootDir, vecSpread, 2048, iBulletType); // shoot +-5 degrees
-#else
-	FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_10DEGREES, 2048, BULLET_MONSTER_MP5 ); // shoot +-5 degrees
-#endif // defined ( EFTD_DLL )
 
 	pev->effects |= EF_MUZZLEFLASH;
 	
@@ -920,7 +866,6 @@ void CHGrunt :: Shotgun ( void )
 	SetBlending( 0, angDir.x );
 }
 
-#if defined ( EFTD_DLL )
 void CHGrunt::ShootMP5(Vector vecSpread)
 {
 	Shoot(vecSpread, BULLET_MONSTER_MP5);
@@ -961,7 +906,6 @@ void CHGrunt::ShootMac10(Vector vecSpread)
 		break;
 	}
 }
-#endif // defined ( EFTD_DLL )
 //=========================================================
 // HandleAnimEvent - catches the monster-specific messages
 // that occur when tagged animation frames are played.
@@ -983,7 +927,6 @@ void CHGrunt :: HandleAnimEvent( MonsterEvent_t *pEvent )
 			// switch to body group with no gun.
 			SetBodygroup( GUN_GROUP, GUN_NONE );
 
-#if defined ( EFTD_DLL )
 			// now spawn a gun.
 
 			// Regular soldier model.
@@ -1015,21 +958,6 @@ void CHGrunt :: HandleAnimEvent( MonsterEvent_t *pEvent )
 					DropItem("weapon_ak47", vecGunPos, vecGunAngles);
 				}
 			}
-#else
-			// now spawn a gun.
-			if (FBitSet( pev->weapons, HGRUNT_SHOTGUN ))
-			{
-				 DropItem( "weapon_shotgun", vecGunPos, vecGunAngles );
-			}
-			else
-			{
-				 DropItem( "weapon_9mmAR", vecGunPos, vecGunAngles );
-			}
-			if (FBitSet( pev->weapons, HGRUNT_GRENADELAUNCHER ))
-			{
-				DropItem( "ammo_ARgrenades", BodyTarget( pev->origin ), vecGunAngles );
-			}
-#endif // defined ( EFTD_DLL )
 
 			}
 			break;
@@ -1073,7 +1001,6 @@ void CHGrunt :: HandleAnimEvent( MonsterEvent_t *pEvent )
 
 		case HGRUNT_AE_BURST1:
 		{
-#if defined ( EFTD_DLL )
 			// Regular soldier model.
 			if ( !IsSnowGrunt() )
 			{
@@ -1114,28 +1041,6 @@ void CHGrunt :: HandleAnimEvent( MonsterEvent_t *pEvent )
 					ShootMac10(VECTOR_CONE_10DEGREES);
 				}
 			}
-#else
-			if ( FBitSet( pev->weapons, HGRUNT_9MMAR ))
-			{
-				Shoot();
-
-				// the first round of the three round burst plays the sound and puts a sound in the world sound list.
-				if ( RANDOM_LONG(0,1) )
-				{
-					EMIT_SOUND( ENT(pev), CHAN_WEAPON, "hgrunt/gr_mgun1.wav", 1, ATTN_NORM );
-				}
-				else
-				{
-					EMIT_SOUND( ENT(pev), CHAN_WEAPON, "hgrunt/gr_mgun2.wav", 1, ATTN_NORM );
-				}
-			}
-			else
-			{
-				Shotgun( );
-
-				EMIT_SOUND(ENT(pev), CHAN_WEAPON, "weapons/sbarrel1.wav", 1, ATTN_NORM );
-			}
-#endif // defined ( EFTD_DLL )
 		
 			CSoundEnt::InsertSound ( bits_SOUND_COMBAT, pev->origin, 384, 0.3 );
 		}
@@ -1143,7 +1048,6 @@ void CHGrunt :: HandleAnimEvent( MonsterEvent_t *pEvent )
 
 		case HGRUNT_AE_BURST2:
 		case HGRUNT_AE_BURST3:
-#if defined ( EFTD_DLL )
 			// Regular soldier model.
 			if (!IsSnowGrunt())
 			{
@@ -1164,9 +1068,6 @@ void CHGrunt :: HandleAnimEvent( MonsterEvent_t *pEvent )
 					ShootMac10( VECTOR_CONE_10DEGREES );
 				}
 			}
-#else
-			Shoot();
-#endif // defined ( EFTD_DLL )
 			break;
 
 		case HGRUNT_AE_KICK:
@@ -1207,7 +1108,6 @@ void CHGrunt :: Spawn()
 {
 	Precache( );
 
-#if defined ( EFTD_DLL )
 	char* szModel = (char*)STRING(pev->model);
 	if (!szModel || !*szModel)
 	{
@@ -1221,9 +1121,6 @@ void CHGrunt :: Spawn()
 	}
 
 	SET_MODEL(ENT(pev), szModel);
-#else
-	SET_MODEL(ENT(pev), "models/hgrunt.mdl");
-#endif // defined ( EFTD_DLL )
 	UTIL_SetSize(pev, VEC_HUMAN_HULL_MIN, VEC_HUMAN_HULL_MAX);
 
 	pev->solid			= SOLID_SLIDEBOX;
@@ -1244,7 +1141,6 @@ void CHGrunt :: Spawn()
 
 	m_HackedGunPos = Vector ( 0, 0, 55 );
 
-#if defined ( EFTD_DLL )
 	m_iGruntFlags = 0;
 
 	// Check to see if this is a regular or snow grunt model.
@@ -1303,41 +1199,6 @@ void CHGrunt :: Spawn()
 		// Only one arctic head available.
 		SetBodygroup(HEAD_GROUP, HEAD_ARCTIC);
 	}
-#else
-	if (pev->weapons == 0)
-	{
-		// initialize to original values
-		pev->weapons = HGRUNT_9MMAR | HGRUNT_HANDGRENADE;
-		// pev->weapons = HGRUNT_SHOTGUN;
-		// pev->weapons = HGRUNT_9MMAR | HGRUNT_GRENADELAUNCHER;
-	}
-
-	if (FBitSet( pev->weapons, HGRUNT_SHOTGUN ))
-	{
-		SetBodygroup( GUN_GROUP, GUN_SHOTGUN );
-		m_cClipSize		= 8;
-	}
-	else
-	{
-		m_cClipSize		= GRUNT_CLIP_SIZE;
-	}
-	m_cAmmoLoaded		= m_cClipSize;
-
-	if (RANDOM_LONG( 0, 99 ) < 80)
-		pev->skin = 0;	// light skin
-	else
-		pev->skin = 1;	// dark skin
-
-	if (FBitSet( pev->weapons, HGRUNT_SHOTGUN ))
-	{
-		SetBodygroup( HEAD_GROUP, HEAD_SHOTGUN);
-	}
-	else if (FBitSet( pev->weapons, HGRUNT_GRENADELAUNCHER ))
-	{
-		SetBodygroup( HEAD_GROUP, HEAD_M203 );
-		pev->skin = 1; // alway dark skin
-	}
-#endif // defined ( EFTD_DLL )
 
 	CTalkMonster::g_talkWaitTime = 0;
 
@@ -1350,9 +1211,7 @@ void CHGrunt :: Spawn()
 void CHGrunt :: Precache()
 {
 	PRECACHE_MODEL("models/hgrunt.mdl");
-#if defined ( EFTD_DLL )
 	PRECACHE_MODEL("models/hgruntsnow.mdl");
-#endif // defined ( EFTD_DLL )
 
 	PRECACHE_SOUND( "hgrunt/gr_mgun1.wav" );
 	PRECACHE_SOUND( "hgrunt/gr_mgun2.wav" );
@@ -1375,7 +1234,6 @@ void CHGrunt :: Precache()
 
 	PRECACHE_SOUND("zombie/claw_miss2.wav");// because we use the basemonster SWIPE animation event
 
-#if defined ( EFTD_DLL )
 	PRECACHE_SOUND( "weapons/Hks1.wav" );
 	PRECACHE_SOUND( "weapons/Hks2.wav" );
 	PRECACHE_SOUND( "weapons/Hks3.wav" );
@@ -1383,7 +1241,6 @@ void CHGrunt :: Precache()
 	PRECACHE_SOUND( "weapons/mac1.wav" );
 	PRECACHE_SOUND( "weapons/mac2.wav" );
 	PRECACHE_SOUND( "weapons/mac3.wav" );
-#endif // defined ( EFTD_DLL )
 	// get voice pitch
 	if (RANDOM_LONG(0,1))
 		m_voicePitch = 109 + RANDOM_LONG(0,7);
@@ -2203,7 +2060,6 @@ void CHGrunt :: SetActivity ( Activity NewActivity )
 		}
 		else
 		{
-#if defined ( EFTD_DLL )
 			// Regular soldier model.
 			if ( !IsSnowGrunt() )
 			{
@@ -2232,18 +2088,6 @@ void CHGrunt :: SetActivity ( Activity NewActivity )
 					iSequence = LookupSequence("crouching_mp5");
 				}
 			}
-#else
-			if ( m_fStanding )
-			{
-				// get aimable sequence
-				iSequence = LookupSequence( "standing_shotgun" );
-			}
-			else
-			{
-				// get crouching shoot
-				iSequence = LookupSequence( "crouching_shotgun" );
-			}
-#endif // defined ( EFTD_DLL )
 		}
 		break;
 	case ACT_RANGE_ATTACK2:
@@ -2718,12 +2562,10 @@ Schedule_t* CHGrunt :: GetScheduleOfType ( int Type )
 	}
 }
 
-#if defined ( EFTD_DLL )
 BOOL CHGrunt::IsSnowGrunt(void) const
 {
 	return m_iGruntFlags & GF_SNOWGRUNT;
 }
-#endif // defined ( EFTD_DLL )
 
 //=========================================================
 // CHGruntRepel - when triggered, spawns a monster_human_grunt

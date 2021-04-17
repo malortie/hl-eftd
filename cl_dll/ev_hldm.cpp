@@ -74,10 +74,8 @@ void EV_SnarkFire( struct event_args_s *args  );
 
 
 void EV_TrainPitchAdjust( struct event_args_s *args );
-#if defined ( EFTD_CLIENT_DLL )
 void EV_FireAK47(struct event_args_s *args);
 void EV_FireMac10(struct event_args_s *args);
-#endif // defined ( EFTD_CLIENT_DLL )
 }
 
 #define VECTOR_CONE_1DEGREES Vector( 0.00873, 0.00873, 0.00873 )
@@ -249,7 +247,6 @@ char *EV_HLDM_DamageDecal( physent_t *pe )
 	return decalname;
 }
 
-#if defined ( EFTD_CLIENT_DLL )
 //=====================
 // EV_WallPuffCallback
 //=====================
@@ -257,7 +254,6 @@ void EV_WallPuffCallback(struct tempent_s *ent, float frametime, float currentti
 {
 	ent->entity.angles = ent->entity.baseline.vuser1;
 }
-#endif // defined ( EFTD_CLIENT_DLL )
 void EV_HLDM_GunshotDecalTrace( pmtrace_t *pTrace, char *decalName )
 {
 	int iRand;
@@ -288,7 +284,6 @@ void EV_HLDM_GunshotDecalTrace( pmtrace_t *pTrace, char *decalName )
 			gEngfuncs.pEfxAPI->R_DecalShoot( 
 				gEngfuncs.pEfxAPI->Draw_DecalIndex( gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalName ) ), 
 				gEngfuncs.pEventAPI->EV_IndexFromTrace( pTrace ), 0, pTrace->endpos, 0 );
-#if defined ( EFTD_CLIENT_DLL )
 			//
 			// Spawn small smoke puffs at the trace end location.
 			//
@@ -317,7 +312,6 @@ void EV_HLDM_GunshotDecalTrace( pmtrace_t *pTrace, char *decalName )
 				pSmoke->entity.baseline.vuser1 = angles;
 				pSmoke->callback = EV_WallPuffCallback;
 			}
-#endif // defined ( EFTD_CLIENT_DLL )
 		}
 	}
 }
@@ -338,14 +332,12 @@ void EV_HLDM_DecalGunshot( pmtrace_t *pTrace, int iBulletType )
 		case BULLET_MONSTER_MP5:
 		case BULLET_PLAYER_BUCKSHOT:
 		case BULLET_PLAYER_357:
-#if defined ( EFTD_CLIENT_DLL )
 		case BULLET_PLAYER_AK47:
 		case BULLET_MONSTER_AK47:
 		case BULLET_MONSTER_HVMG:
 		case BULLET_PLAYER_MAC10:
 		case BULLET_MONSTER_MAC10:
 		case BULLET_PLAYER_SNIPER:
-#endif // defined ( EFTD_CLIENT_DLL )
 		default:
 			// smoke and decal
 			EV_HLDM_GunshotDecalTrace( pTrace, EV_HLDM_DamageDecal( pe ) );
@@ -388,12 +380,10 @@ int EV_HLDM_CheckTracer( int idx, float *vecSrc, float *end, float *forward, flo
 		case BULLET_MONSTER_MP5:
 		case BULLET_MONSTER_9MM:
 		case BULLET_MONSTER_12MM:
-#if defined ( EFTD_CLIENT_DLL )
 		case BULLET_PLAYER_AK47:
 		case BULLET_MONSTER_AK47:
 		case BULLET_MONSTER_HVMG:
 		case BULLET_MONSTER_MAC10:
-#endif // defined ( EFTD_CLIENT_DLL )
 		default:
 			EV_CreateTracer( vecTracerSrc, end );
 			break;
@@ -474,10 +464,8 @@ void EV_HLDM_FireBullets( int idx, float *forward, float *right, float *up, int 
 			
 					break;
 			case BULLET_PLAYER_MP5:		
-#if defined ( EFTD_CLIENT_DLL )
 			case BULLET_PLAYER_AK47:
 			case BULLET_PLAYER_MAC10:
-#endif // defined ( EFTD_CLIENT_DLL )
 				
 				if ( !tracer )
 				{
@@ -491,9 +479,7 @@ void EV_HLDM_FireBullets( int idx, float *forward, float *right, float *up, int 
 			
 				break;
 			case BULLET_PLAYER_357:
-#if defined ( EFTD_CLIENT_DLL )
 			case BULLET_PLAYER_SNIPER:
-#endif // defined ( EFTD_CLIENT_DLL )
 				
 				EV_HLDM_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
 				EV_HLDM_DecalGunshot( &tr, iBulletType );
@@ -1353,7 +1339,6 @@ void EV_FireCrossbow2( event_args_t *args )
 //TODO: Fully predict the fliying bolt.
 void EV_FireCrossbow( event_args_t *args )
 {
-#if defined ( EFTD_CLIENT_DLL )
 	int idx;
 	vec3_t origin;
 	vec3_t angles;
@@ -1389,27 +1374,6 @@ void EV_FireCrossbow( event_args_t *args )
 	VectorCopy( forward, vecAiming );
 
 	EV_HLDM_FireBullets( idx, forward, right, up, 1, vecSrc, vecAiming, 8192, BULLET_PLAYER_SNIPER, 0, 0, args->fparam1, args->fparam2 );
-#else
-	int idx;
-	vec3_t origin;
-
-	idx = args->entindex;
-	VectorCopy( args->origin, origin );
-	
-	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/xbow_fire1.wav", 1, ATTN_NORM, 0, 93 + gEngfuncs.pfnRandomLong(0,0xF) );
-	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_ITEM, "weapons/xbow_reload1.wav", gEngfuncs.pfnRandomFloat(0.95, 1.0), ATTN_NORM, 0, 93 + gEngfuncs.pfnRandomLong(0,0xF) );
-
-	//Only play the weapon anims if I shot it. 
-	if ( EV_IsLocal( idx ) )
-	{
-		if ( args->iparam1 )
-			gEngfuncs.pEventAPI->EV_WeaponAnimation( CROSSBOW_FIRE1, 1 );
-		else if ( args->iparam2 )
-			gEngfuncs.pEventAPI->EV_WeaponAnimation( CROSSBOW_FIRE3, 1 );
-
-		V_PunchAxis( 0, -2.0 );
-	}
-#endif // defined ( EFTD_CLIENT_DLL )
 }
 //======================
 //	   CROSSBOW END 
@@ -1804,7 +1768,6 @@ int EV_TFC_IsAllyTeam( int iTeam1, int iTeam2 )
 {
 	return 0;
 }
-#if defined ( EFTD_CLIENT_DLL )
 //======================
 //	   AK47 START
 //======================
@@ -1968,4 +1931,3 @@ void EV_FireMac10(struct event_args_s *args)
 //======================
 //	   MAC10 END
 //======================
-#endif // defined ( EFTD_CLIENT_DLL )

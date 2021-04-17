@@ -302,7 +302,6 @@ void CGameRules::RefreshSkillData ( void )
 	gSkillData.plrStomach = GetSkillCvar( "sk_player_stomach" );
 	gSkillData.plrLeg = GetSkillCvar( "sk_player_leg" );
 	gSkillData.plrArm = GetSkillCvar( "sk_player_arm" );
-#if defined ( EFTD_DLL )
 	// Diablo
 	gSkillData.diabloHealth = GetSkillCvar("sk_diablo_health");
 	gSkillData.diabloDmgOneSlash = GetSkillCvar("sk_diablo_dmg_one_slash");
@@ -322,7 +321,6 @@ void CGameRules::RefreshSkillData ( void )
 
 	// Grunt Mac10
 	gSkillData.monDmgMac10 = GetSkillCvar("sk_mac10_bullet");
-#endif // defined ( EFTD_DLL )
 }
 
 //=========================================================

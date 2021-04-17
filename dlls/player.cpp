@@ -427,7 +427,6 @@ void CBasePlayer :: TraceAttack( entvars_t *pevAttacker, float flDamage, Vector 
 		SpawnBlood(ptr->vecEndPos, BloodColor(), flDamage);// a little surface blood.
 		TraceBleed( flDamage, vecDir, ptr, bitsDamageType );
 		AddMultiDamage( pevAttacker, this, flDamage, bitsDamageType );
-#if defined ( EFTD_DLL )
 		if (bitsDamageType & (DMG_BLAST | DMG_SHOCK | DMG_SONIC | DMG_ENERGYBEAM))
 		{
 			float flRand = RANDOM_FLOAT(0, 1);
@@ -466,7 +465,6 @@ void CBasePlayer :: TraceAttack( entvars_t *pevAttacker, float flDamage, Vector 
 				}
 			}
 		}
-#endif // defined ( EFTD_DLL )
 	}
 }
 
@@ -480,7 +478,6 @@ void CBasePlayer :: TraceAttack( entvars_t *pevAttacker, float flDamage, Vector 
 #define ARMOR_RATIO	 0.2	// Armor Takes 80% of the damage
 #define ARMOR_BONUS  0.5	// Each Point of Armor is work 1/x points of health
 
-#if defined ( EFTD_DLL )
 // Damage values for determine the amount of fade to apply.
 #define DAMAGE_FADE_MIN			0
 #define DAMAGE_FADE_MAX			100
@@ -492,7 +489,6 @@ void CBasePlayer :: TraceAttack( entvars_t *pevAttacker, float flDamage, Vector 
 // Amount of time to hold fade effect.
 #define DAMAGE_HOLD_MIN			0.5
 #define DAMAGE_HOLD_MAX			0.8
-#endif // defined ( EFTD_DLL )
 int CBasePlayer :: TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType )
 {
 	// have suit diagnose the problem - ie: report damage type
@@ -555,7 +551,6 @@ int CBasePlayer :: TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, 
 		flDamage = flNew;
 	}
 
-#if defined ( EFTD_DLL )
 	// Fade the screen.
 	if (flDamage > DAMAGE_FADE_MIN && !(bitsDamageType & (DMG_DROWN)))
 	{
@@ -605,7 +600,6 @@ int CBasePlayer :: TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, 
 			UTIL_ScreenFade(this, Vector(128, 0, 0), 0.8f, fadehold, alpha, FFADE_IN);
 		}
 	}
-#endif // defined ( EFTD_DLL )
 	// this cast to INT is critical!!! If a player ends up with 0.5 health, the engine will get that
 	// as an int (zero) and think the player is dead! (this will incite a clientside screentilt, etc)
 	fTookDamage = CBaseMonster::TakeDamage(pevInflictor, pevAttacker, (int)flDamage, bitsDamageType);
@@ -1030,11 +1024,7 @@ void CBasePlayer::Killed( entvars_t *pevAttacker, int iGib )
 
 
 	// UNDONE: Put this in, but add FFADE_PERMANENT and make fade time 8.8 instead of 4.12
-#if defined ( EFTD_DLL )
 	UTIL_ScreenFade( this, Vector(128, 0, 0), 12, 15, 192, FFADE_OUT | FFADE_STAYOUT );
-#else
-	// UTIL_ScreenFade( edict(), Vector(128,0,0), 6, 15, 255, FFADE_OUT | FFADE_MODULATE );
-#endif
 
 	if ( ( pev->health < -40 && iGib != GIB_NEVER ) || iGib == GIB_ALWAYS )
 	{
@@ -1242,10 +1232,8 @@ void CBasePlayer::TabulateAmmo()
 	ammo_rockets = AmmoInventory( GetAmmoIndex( "rockets" ) );
 	ammo_uranium = AmmoInventory( GetAmmoIndex( "uranium" ) );
 	ammo_hornets = AmmoInventory( GetAmmoIndex( "Hornets" ) );
-#if defined ( EFTD_DLL )
 	ammo_ak47 = AmmoInventory( GetAmmoIndex( "ak47" ) );
 	ammo_mac10 = AmmoInventory( GetAmmoIndex( "mac10" ) );
-#endif // defined ( EFTD_DLL )
 }
 
 
@@ -2460,9 +2448,7 @@ void CBasePlayer::SetSuitUpdate(char *name, int fgroup, int iNoRepeatTime)
 		return;
 	}
 
-#if defined ( EFTD_DLL )
 	return;
-#endif // defined ( EFTD_DLL )
 	// if name == NULL, then clear out the queue
 
 	if (!name)
@@ -3650,7 +3636,6 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 
 	case 101:
 		gEvilImpulse101 = TRUE;
-#if defined ( EFTD_DLL )
 		GiveNamedItem("item_suit");
 		GiveNamedItem("item_battery");
 		GiveNamedItem("weapon_crowbar");
@@ -3674,34 +3659,6 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveNamedItem("ammo_ak47");
 		GiveNamedItem("weapon_mac10");
 		GiveNamedItem("ammo_mac10");
-#else
-		GiveNamedItem( "item_suit" );
-		GiveNamedItem( "item_battery" );
-		GiveNamedItem( "weapon_crowbar" );
-		GiveNamedItem( "weapon_9mmhandgun" );
-		GiveNamedItem( "ammo_9mmclip" );
-		GiveNamedItem( "weapon_shotgun" );
-		GiveNamedItem( "ammo_buckshot" );
-		GiveNamedItem( "weapon_9mmAR" );
-		GiveNamedItem( "ammo_9mmAR" );
-		GiveNamedItem( "ammo_ARgrenades" );
-		GiveNamedItem( "weapon_handgrenade" );
-		GiveNamedItem( "weapon_tripmine" );
-#ifndef OEM_BUILD
-		GiveNamedItem( "weapon_357" );
-		GiveNamedItem( "ammo_357" );
-		GiveNamedItem( "weapon_crossbow" );
-		GiveNamedItem( "ammo_crossbow" );
-		GiveNamedItem( "weapon_egon" );
-		GiveNamedItem( "weapon_gauss" );
-		GiveNamedItem( "ammo_gaussclip" );
-		GiveNamedItem( "weapon_rpg" );
-		GiveNamedItem( "ammo_rpgclip" );
-		GiveNamedItem( "weapon_satchel" );
-		GiveNamedItem( "weapon_snark" );
-		GiveNamedItem( "weapon_hornetgun" );
-#endif
-#endif // defined ( EFTD_DLL )
 		gEvilImpulse101 = FALSE;
 		break;
 

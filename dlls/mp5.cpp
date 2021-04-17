@@ -57,12 +57,10 @@ void CMP5::Spawn( )
 
 	m_iDefaultAmmo = MP5_DEFAULT_GIVE;
 
-#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 	m_fSpotActive = 1;
 #ifndef CLIENT_DLL
 	m_pSpot = NULL;
 #endif
-#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 	FallInit();// get ready to fall down.
 }
 
@@ -94,9 +92,7 @@ void CMP5::Precache( void )
 
 	m_usMP5 = PRECACHE_EVENT( 1, "events/mp5.sc" );
 	m_usMP52 = PRECACHE_EVENT( 1, "events/mp52.sc" );
-#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 	UTIL_PrecacheOther( "laser_spot" );
-#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 }
 
 int CMP5::GetItemInfo(ItemInfo *p)
@@ -130,7 +126,6 @@ int CMP5::AddToPlayer( CBasePlayer *pPlayer )
 
 BOOL CMP5::Deploy( )
 {
-#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 	BOOL bResult = DefaultDeploy( "models/v_9mmAR.mdl", "models/p_9mmAR.mdl", MP5_DEPLOY, "mp5" );
 
 	if (bResult)
@@ -139,12 +134,8 @@ BOOL CMP5::Deploy( )
 	}
 
 	return bResult;
-#else
-	return DefaultDeploy( "models/v_9mmAR.mdl", "models/p_9mmAR.mdl", MP5_DEPLOY, "mp5" );
-#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 }
 
-#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 void CMP5::Holster(int skiplocal /*= 0*/)
 {
 	m_fInReload = FALSE;// cancel any reload in progress.
@@ -159,7 +150,6 @@ void CMP5::Holster(int skiplocal /*= 0*/)
 	}
 #endif
 }
-#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 
 void CMP5::PrimaryAttack()
 {
@@ -192,7 +182,6 @@ void CMP5::PrimaryAttack()
 	Vector vecSrc	 = m_pPlayer->GetGunPosition( );
 	Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
 	Vector vecDir;
-#if defined ( EFTD_DLL )
 	Vector vecSpread;
 
 	// Allow for higher accuracy when the player is crouching.
@@ -207,22 +196,6 @@ void CMP5::PrimaryAttack()
 
 	// single player spread
 	vecDir = m_pPlayer->FireBulletsPlayer( 1, vecSrc, vecAiming, vecSpread, 8192, BULLET_PLAYER_MP5, 2, 0, m_pPlayer->pev, m_pPlayer->random_seed );
-#else
-#ifdef CLIENT_DLL
-	if ( !bIsMultiplayer() )
-#else
-	if ( !g_pGameRules->IsMultiplayer() )
-#endif
-	{
-		// optimized multiplayer. Widened to make it easier to hit a moving player
-		vecDir = m_pPlayer->FireBulletsPlayer( 1, vecSrc, vecAiming, VECTOR_CONE_6DEGREES, 8192, BULLET_PLAYER_MP5, 2, 0, m_pPlayer->pev, m_pPlayer->random_seed );
-	}
-	else
-	{
-		// single player spread
-		vecDir = m_pPlayer->FireBulletsPlayer( 1, vecSrc, vecAiming, VECTOR_CONE_3DEGREES, 8192, BULLET_PLAYER_MP5, 2, 0, m_pPlayer->pev, m_pPlayer->random_seed );
-	}
-#endif // defined ( EFTD_DLL )
 
   int flags;
 #if defined( CLIENT_WEAPONS )
@@ -243,9 +216,7 @@ void CMP5::PrimaryAttack()
 		m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.1;
 
 	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + UTIL_SharedRandomFloat( m_pPlayer->random_seed, 10, 15 );
-#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 	UpdateSpot();
-#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 }
 
 
@@ -300,14 +271,12 @@ void CMP5::SecondaryAttack( void )
 	if (!m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType])
 		// HEV suit - indicate out of ammo condition
 		m_pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
-#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 #ifndef CLIENT_DLL
 	if (m_pSpot && m_fSpotActive)
 	{
 		m_pSpot->Suspend(1);
 	}
 #endif
-#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 }
 
 void CMP5::Reload( void )
@@ -315,7 +284,6 @@ void CMP5::Reload( void )
 	if ( m_pPlayer->ammo_9mm <= 0 )
 		return;
 
-#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 	int iResult = DefaultReload(MP5_MAX_CLIP, MP5_RELOAD, 3.0);
 
 	if (iResult)
@@ -328,17 +296,12 @@ void CMP5::Reload( void )
 		}
 #endif
 	}
-#else
-	DefaultReload( MP5_MAX_CLIP, MP5_RELOAD, 1.5 );
-#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 }
 
 
 void CMP5::WeaponIdle( void )
 {
-#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 	UpdateSpot();
-#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 	ResetEmptySound( );
 
 	m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
@@ -364,7 +327,6 @@ void CMP5::WeaponIdle( void )
 	m_flTimeWeaponIdle = UTIL_SharedRandomFloat( m_pPlayer->random_seed, 10, 15 ); // how long till we do this again.
 }
 
-#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 void CMP5::UpdateSpot(void)
 {
 #ifndef CLIENT_DLL
@@ -387,7 +349,6 @@ void CMP5::UpdateSpot(void)
 	}
 #endif
 }
-#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 
 class CMP5AmmoClip : public CBasePlayerAmmo
 {

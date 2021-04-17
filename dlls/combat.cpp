@@ -1357,10 +1357,8 @@ void CBaseMonster :: TraceAttack( entvars_t *pevAttacker, float flDamage, Vector
 		SpawnBlood(ptr->vecEndPos, BloodColor(), flDamage);// a little surface blood.
 		TraceBleed( flDamage, vecDir, ptr, bitsDamageType );
 		AddMultiDamage( pevAttacker, this, flDamage, bitsDamageType );
-#if defined ( EFTD_DLL )
 		// Spawn blood stream.
 		UTIL_BloodStream(ptr->vecEndPos, -vecDir, (BloodColor() == BLOOD_COLOR_RED) ? 70 : BloodColor(), RANDOM_LONG(4, 5) * 10);
-#endif // defined ( EFTD_DLL )
 	}
 }
 
@@ -1426,11 +1424,9 @@ void CBaseEntity::FireBullets(ULONG cShots, Vector vecSrc, Vector vecDirShooting
 			case BULLET_MONSTER_MP5:
 			case BULLET_MONSTER_9MM:
 			case BULLET_MONSTER_12MM:
-#if defined ( EFTD_DLL )
 			case BULLET_MONSTER_AK47:
 			case BULLET_MONSTER_MAC10:
 			case BULLET_MONSTER_HVMG:
-#endif // defined ( EFTD_DLL )
 			default:
 				MESSAGE_BEGIN( MSG_PAS, SVC_TEMPENTITY, vecTracerSrc );
 					WRITE_BYTE( TE_TRACER );
@@ -1494,7 +1490,6 @@ void CBaseEntity::FireBullets(ULONG cShots, Vector vecSrc, Vector vecDirShooting
 				}
 
 				break;
-#if defined ( EFTD_DLL )
 			case BULLET_MONSTER_AK47:
 				pEntity->TraceAttack(pevAttacker, gSkillData.monDmgMP5, vecDir, &tr, DMG_BULLET);
 
@@ -1519,7 +1514,6 @@ void CBaseEntity::FireBullets(ULONG cShots, Vector vecSrc, Vector vecDirShooting
 				DecalGunshot(&tr, iBulletType);
 
 				break;
-#endif // defined ( EFTD_DLL )
 			}
 		}
 		// make bullet trails
@@ -1610,7 +1604,6 @@ Vector CBaseEntity::FireBulletsPlayer ( ULONG cShots, Vector vecSrc, Vector vecD
 				}
 
 				break;
-#if defined ( EFTD_DLL )
 			case BULLET_PLAYER_AK47:
 				pEntity->TraceAttack(pevAttacker, gSkillData.plrDmgAK47, vecDir, &tr, DMG_BULLET);
 				break;
@@ -1622,7 +1615,6 @@ Vector CBaseEntity::FireBulletsPlayer ( ULONG cShots, Vector vecSrc, Vector vecD
 			case BULLET_PLAYER_SNIPER:
 				pEntity->TraceAttack(pevAttacker, gSkillData.plrDmgCrossbowMonster, vecDir, &tr, DMG_BULLET);
 				break;
-#endif // defined ( EFTD_DLL )
 			}
 		}
 		// make bullet trails

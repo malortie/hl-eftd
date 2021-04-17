@@ -135,6 +135,19 @@ struct skilldata_t
 	float plrStomach;
 	float plrLeg;
 	float plrArm;
+#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
+	float diabloHealth;
+	float diabloDmgOneSlash;
+	float diabloDmgBothSlash;
+
+	float hassaultHealth;
+
+	float plrDmgAK47;
+	float plrDmgMac10;
+
+	float monDmgHvmg;
+	float monDmgMac10;
+#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 };
 
 extern	DLL_GLOBAL	skilldata_t	gSkillData;

@@ -27,6 +27,13 @@
 #include "parsemsg.h"
 #include <string.h>
 
+#if defined ( EFTD_CLIENT_DLL )
+#define HEALTH_BAR_LEFT		68
+#define HEALTH_BAR_BOTTOM	96
+
+#define HEALTH_BAR_WIDTH	20
+#define HEALTH_BAR_HEIGHT	150
+#endif // defined ( EFTD_CLIENT_DLL )
 
 DECLARE_MESSAGE(m_Health, Health )
 DECLARE_MESSAGE(m_Health, Damage )
@@ -169,6 +176,59 @@ void CHudHealth::GetPainColor( int &r, int &g, int &b )
 
 int CHudHealth::Draw(float flTime)
 {
+#if defined ( EFTD_CLIENT_DLL )
+	if ( (gHUD.m_iHideHUDDisplay & HIDEHUD_HEALTH) || gEngfuncs.IsSpectateOnly() )
+		return 1;
+
+	if (!(gHUD.m_iWeaponBits & (1 << (WEAPON_SUIT))))
+		return 1;
+
+	int r, g, b;
+	int a = 0, x, y;
+	int iWidth, iHeight;
+	
+	iWidth = HEALTH_BAR_WIDTH;
+	iHeight = HEALTH_BAR_HEIGHT;
+
+	x = ScreenWidth - HEALTH_BAR_LEFT;
+	y = ScreenHeight - HEALTH_BAR_BOTTOM - iHeight;
+
+	// Draw empty transparent bar.
+	r = g = b = 255;
+	a = 16;
+
+	FillRGBA(x, y, iWidth, iHeight, r, g, b, a);
+
+	// Draw health level bar.
+	UnpackRGB( r, g, b, RGB_YELLOWISH );
+
+	// Has health changed? Flash the health #
+	/*if (m_fFade)
+	{
+		if (m_fFade > FADE_TIME)
+			m_fFade = FADE_TIME;
+
+		m_fFade -= (gHUD.m_flTimeDelta * 20);
+		if (m_fFade <= 0)
+		{
+			a = 128;
+			m_fFade = 0;
+		}
+
+		// Fade the health number back to dim
+
+		a = MIN_ALPHA + (m_fFade / FADE_TIME) * 128;
+
+	}
+	else*/
+		a = MIN_ALPHA;
+
+	iHeight = (m_iHealth * HEALTH_BAR_HEIGHT) / 100;
+	
+	gEngfuncs.pfnFillRGBABlend(x, y + (HEALTH_BAR_HEIGHT - iHeight), HEALTH_BAR_WIDTH, iHeight, r, g, b, a);
+
+	return 1;
+#else
 	int r, g, b;
 	int a = 0, x, y;
 	int HealthWidth;
@@ -229,6 +289,7 @@ int CHudHealth::Draw(float flTime)
 
 	DrawDamage(flTime);
 	return DrawPain(flTime);
+#endif // defined ( EFTD_CLIENT_DLL )
 }
 
 void CHudHealth::CalcDamageDirection(vec3_t vecFrom)

@@ -36,6 +36,30 @@ extern DLL_GLOBAL Vector		g_vecAttackDir;
 // be spawned, and still remain fairly flexible
 const char *CBreakable::pSpawnObjects[] =
 {
+#if defined ( EFTD_DLL )
+	NULL,				// 0
+	"item_battery",		// 1
+	"item_healthkit",	// 2
+	"weapon_9mmhandgun",// 3
+	"ammo_9mmclip",		// 4
+	"weapon_9mmAR",		// 5
+	"ammo_9mmAR",		// 6
+	"ammo_ARgrenades",	// 7
+	"weapon_shotgun",	// 8
+	"ammo_buckshot",	// 9
+	"weapon_crossbow",	// 10
+	"ammo_crossbow",	// 11
+	"weapon_rpg",		// 12
+	"ammo_rpgclip",		// 13
+	"weapon_handgrenade",	// 14
+	"weapon_tripmine",		// 15
+	"weapon_satchel",	// 16
+	"weapon_snark",		// 17
+	"weapon_ak47",		// 18
+	"ammo_ak47",		// 19
+	"weapon_mac10",		// 20
+	"ammo_mac10",		// 21
+#else
 	NULL,				// 0
 	"item_battery",		// 1
 	"item_healthkit",	// 2
@@ -58,6 +82,7 @@ const char *CBreakable::pSpawnObjects[] =
 	"weapon_satchel",	// 19
 	"weapon_snark",		// 20
 	"weapon_hornetgun",	// 21
+#endif // defined ( EFTD_DLL )
 };
 
 void CBreakable::KeyValue( KeyValueData* pkvd )

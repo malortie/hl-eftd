@@ -842,8 +842,10 @@ int CHudAmmo::Draw(float flTime)
 	// Draw Weapon Menu
 	DrawWList(flTime);
 
+#if !defined ( EFTD_CLIENT_DLL )
 	// Draw ammo pickup history
 	gHR.DrawAmmoHistory( flTime );
+#endif // !defined ( EFTD_CLIENT_DLL )
 
 	if (!(m_iFlags & HUD_ACTIVE))
 		return 0;

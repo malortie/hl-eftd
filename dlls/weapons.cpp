@@ -177,6 +177,14 @@ void DecalGunshot( TraceResult *pTrace, int iBulletType )
 		case BULLET_MONSTER_MP5:
 		case BULLET_PLAYER_BUCKSHOT:
 		case BULLET_PLAYER_357:
+#if defined ( EFTD_DLL )
+		case BULLET_PLAYER_AK47:
+		case BULLET_MONSTER_AK47:
+		case BULLET_MONSTER_HVMG:
+		case BULLET_PLAYER_MAC10:
+		case BULLET_MONSTER_MAC10:
+		case BULLET_PLAYER_SNIPER:
+#endif // defined ( EFTD_DLL )
 		default:
 			// smoke and decal
 			UTIL_GunshotDecalTrace( pTrace, DamageDecal( pEntity, DMG_BULLET ) );
@@ -310,6 +318,58 @@ void W_Precache(void)
 	giAmmoIndex = 0;
 
 	// custom items...
+#if defined ( EFTD_DLL )
+	// common world objects
+	UTIL_PrecacheOther("item_suit");
+	UTIL_PrecacheOther("item_battery");
+	UTIL_PrecacheOther("item_antidote");
+	UTIL_PrecacheOther("item_security");
+	UTIL_PrecacheOther("item_longjump");
+
+	// shotgun
+	UTIL_PrecacheOtherWeapon("weapon_shotgun");
+	UTIL_PrecacheOther("ammo_buckshot");
+
+	// crowbar
+	UTIL_PrecacheOtherWeapon("weapon_crowbar");
+
+	// glock
+	UTIL_PrecacheOtherWeapon("weapon_9mmhandgun");
+	UTIL_PrecacheOther("ammo_9mmclip");
+
+	// mp5
+	UTIL_PrecacheOtherWeapon("weapon_9mmAR");
+	UTIL_PrecacheOther("ammo_9mmAR");
+	UTIL_PrecacheOther("ammo_ARgrenades");
+
+	// rpg
+	UTIL_PrecacheOtherWeapon("weapon_rpg");
+	UTIL_PrecacheOther("ammo_rpgclip");
+
+	// crossbow
+	UTIL_PrecacheOtherWeapon("weapon_crossbow");
+	UTIL_PrecacheOther("ammo_crossbow");
+
+	// tripmine
+	UTIL_PrecacheOtherWeapon("weapon_tripmine");
+
+	// satchel charge
+	UTIL_PrecacheOtherWeapon("weapon_satchel");
+
+	// hand grenade
+	UTIL_PrecacheOtherWeapon("weapon_handgrenade");
+
+	// squeak grenade
+	UTIL_PrecacheOtherWeapon("weapon_snark");
+
+	// AK47
+	UTIL_PrecacheOtherWeapon("weapon_ak47");
+	UTIL_PrecacheOther("ammo_ak47");
+
+	// Mac10
+	UTIL_PrecacheOtherWeapon("weapon_mac10");
+	UTIL_PrecacheOther("ammo_mac10");
+#else
 
 	// common world objects
 	UTIL_PrecacheOther( "item_suit" );
@@ -383,6 +443,7 @@ void W_Precache(void)
 	// hornetgun
 	UTIL_PrecacheOtherWeapon( "weapon_hornetgun" );
 #endif
+#endif // defined ( EFTD_DLL )
 
 
 #if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
@@ -402,6 +463,10 @@ void W_Precache(void)
 	g_sModelIndexLaser = PRECACHE_MODEL( (char *)g_pModelNameLaser );
 	g_sModelIndexLaserDot = PRECACHE_MODEL("sprites/laserdot.spr");
 
+#if defined ( EFTD_DLL )
+	PRECACHE_MODEL("sprites/wallsmoke.spr");
+	PRECACHE_MODEL("sprites/groundsmoke.spr");
+#endif // defined ( EFTD_DLL )
 
 	// used by explosions
 	PRECACHE_MODEL ("models/grenade.mdl");
@@ -1586,6 +1651,7 @@ TYPEDESCRIPTION	CShotgun::m_SaveData[] =
 };
 IMPLEMENT_SAVERESTORE( CShotgun, CBasePlayerWeapon );
 
+#if !defined ( EFTD_DLL )
 TYPEDESCRIPTION	CGauss::m_SaveData[] = 
 {
 	DEFINE_FIELD( CGauss, m_fInAttack, FIELD_INTEGER ),
@@ -1608,6 +1674,7 @@ TYPEDESCRIPTION	CEgon::m_SaveData[] =
 	DEFINE_FIELD( CEgon, m_flAmmoUseTime, FIELD_TIME ),
 };
 IMPLEMENT_SAVERESTORE( CEgon, CBasePlayerWeapon );
+#endif // !defined ( EFTD_DLL )
 
 TYPEDESCRIPTION	CSatchel::m_SaveData[] = 
 {
@@ -1615,3 +1682,10 @@ TYPEDESCRIPTION	CSatchel::m_SaveData[] =
 };
 IMPLEMENT_SAVERESTORE( CSatchel, CBasePlayerWeapon );
 
+#if defined ( EFTD_DLL )
+TYPEDESCRIPTION	CMP5::m_SaveData[] =
+{
+	DEFINE_FIELD(CMP5, m_fSpotActive, FIELD_INTEGER),
+};
+IMPLEMENT_SAVERESTORE(CMP5, CBasePlayerWeapon);
+#endif // defined ( EFTD_DLL )

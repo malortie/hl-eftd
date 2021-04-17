@@ -25,6 +25,13 @@
 #include <string.h>
 #include <stdio.h>
 
+#if defined ( EFTD_CLIENT_DLL )
+#define ARMOR_BAR_LEFT		40
+#define ARMOR_BAR_BOTTOM	96
+
+#define ARMOR_BAR_WIDTH		20
+#define ARMOR_BAR_HEIGHT	150
+#endif // defined ( EFTD_CLIENT_DLL )
 DECLARE_MESSAGE(m_Battery, Battery)
 
 int CHudBattery::Init(void)
@@ -84,6 +91,58 @@ int CHudBattery:: MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf )
 
 int CHudBattery::Draw(float flTime)
 {
+#if defined ( EFTD_CLIENT_DLL )
+	if (gHUD.m_iHideHUDDisplay & HIDEHUD_HEALTH)
+		return 1;
+
+	if (!(gHUD.m_iWeaponBits & (1 << (WEAPON_SUIT))))
+		return 1;
+
+	int r, g, b, x, y, a;
+	int iWidth, iHeight;
+
+	iWidth = ARMOR_BAR_WIDTH;
+	iHeight = ARMOR_BAR_HEIGHT;
+
+	x = ScreenWidth - ARMOR_BAR_LEFT;
+	y = ScreenHeight - ARMOR_BAR_BOTTOM - iHeight;
+
+	// Draw empty transparent bar.
+	r = g = b = 255;
+	a = 16;
+
+	FillRGBA(x, y, iWidth, iHeight, r, g, b, a);
+
+	// Draw armor level bar.
+	UnpackRGB(r, g, b, RGB_YELLOWISH);
+
+	// Has health changed? Flash the health #
+	/*if (m_fFade)
+	{
+		if (m_fFade > FADE_TIME)
+			m_fFade = FADE_TIME;
+
+		m_fFade -= (gHUD.m_flTimeDelta * 20);
+		if (m_fFade <= 0)
+		{
+			a = 128;
+			m_fFade = 0;
+		}
+
+		// Fade the health number back to dim
+
+		a = MIN_ALPHA + (m_fFade / FADE_TIME) * 128;
+
+	}
+	else*/
+		a = MIN_ALPHA;
+
+	iHeight = (m_iBat * ARMOR_BAR_HEIGHT) / 100;
+
+	gEngfuncs.pfnFillRGBABlend(x, y + (ARMOR_BAR_HEIGHT - iHeight), ARMOR_BAR_WIDTH, iHeight, r, g, b, a);
+
+	return 1;
+#else
 	if ( gHUD.m_iHideHUDDisplay & HIDEHUD_HEALTH )
 		return 1;
 
@@ -155,4 +214,5 @@ int CHudBattery::Draw(float flTime)
 	x = gHUD.DrawHudNumber(x, y, DHN_3DIGITS | DHN_DRAWZERO, m_iBat, r, g, b);
 
 	return 1;
+#endif // defined ( EFTD_CLIENT_DLL )
 }

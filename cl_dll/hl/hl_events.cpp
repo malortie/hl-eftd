@@ -41,6 +41,10 @@ void EV_SnarkFire( struct event_args_s *args );
 
 
 void EV_TrainPitchAdjust( struct event_args_s *args );
+#if defined ( EFTD_CLIENT_DLL )
+void EV_FireAK47(struct event_args_s *args);
+void EV_FireMac10(struct event_args_s *args);
+#endif // defined ( EFTD_CLIENT_DLL )
 }
 
 /*
@@ -77,4 +81,8 @@ void Game_HookEvents( void )
 	gEngfuncs.pfnHookEvent( "events/firehornet.sc",				EV_HornetGunFire );
 	gEngfuncs.pfnHookEvent( "events/tripfire.sc",				EV_TripmineFire );
 	gEngfuncs.pfnHookEvent( "events/snarkfire.sc",				EV_SnarkFire );
+#if defined ( EFTD_CLIENT_DLL )
+	gEngfuncs.pfnHookEvent( "events/ak47.sc",					EV_FireAK47 );
+	gEngfuncs.pfnHookEvent( "events/mac10.sc",					EV_FireMac10 );
+#endif // defined ( EFTD_CLIENT_DLL )
 }

@@ -257,6 +257,10 @@ void CAGrunt :: TraceAttack( entvars_t *pevAttacker, float flDamage, Vector vecD
 	{
 		SpawnBlood(ptr->vecEndPos, BloodColor(), flDamage);// a little surface blood.
 		TraceBleed( flDamage, vecDir, ptr, bitsDamageType );
+#if defined ( EFTD_DLL )
+		// Spawn blood stream.
+		UTIL_BloodStream(ptr->vecEndPos, -vecDir, BloodColor(), RANDOM_LONG(4, 5) * 10);
+#endif // defined ( EFTD_DLL )
 	}
 
 	AddMultiDamage( pevAttacker, this, flDamage, bitsDamageType );

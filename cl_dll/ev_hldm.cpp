@@ -74,6 +74,10 @@ void EV_SnarkFire( struct event_args_s *args  );
 
 
 void EV_TrainPitchAdjust( struct event_args_s *args );
+#if defined ( EFTD_CLIENT_DLL )
+void EV_FireAK47(struct event_args_s *args);
+void EV_FireMac10(struct event_args_s *args);
+#endif // defined ( EFTD_CLIENT_DLL )
 }
 
 #define VECTOR_CONE_1DEGREES Vector( 0.00873, 0.00873, 0.00873 )
@@ -245,6 +249,15 @@ char *EV_HLDM_DamageDecal( physent_t *pe )
 	return decalname;
 }
 
+#if defined ( EFTD_CLIENT_DLL )
+//=====================
+// EV_WallPuffCallback
+//=====================
+void EV_WallPuffCallback(struct tempent_s *ent, float frametime, float currenttime)
+{
+	ent->entity.angles = ent->entity.baseline.vuser1;
+}
+#endif // defined ( EFTD_CLIENT_DLL )
 void EV_HLDM_GunshotDecalTrace( pmtrace_t *pTrace, char *decalName )
 {
 	int iRand;
@@ -275,6 +288,36 @@ void EV_HLDM_GunshotDecalTrace( pmtrace_t *pTrace, char *decalName )
 			gEngfuncs.pEfxAPI->R_DecalShoot( 
 				gEngfuncs.pEfxAPI->Draw_DecalIndex( gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalName ) ), 
 				gEngfuncs.pEventAPI->EV_IndexFromTrace( pTrace ), 0, pTrace->endpos, 0 );
+#if defined ( EFTD_CLIENT_DLL )
+			//
+			// Spawn small smoke puffs at the trace end location.
+			//
+			int modelindex = gEngfuncs.pEventAPI->EV_FindModelIndex("sprites/wallsmoke.spr");
+			Vector position = pTrace->endpos + pTrace->plane.normal * 2;
+			Vector velocity = pTrace->plane.normal * gEngfuncs.pfnRandomFloat(8, 10);
+
+			TEMPENTITY* pSmoke = gEngfuncs.pEfxAPI->R_TempSprite(
+				position,												// position
+				velocity,												// velocity
+				gEngfuncs.pfnRandomFloat(30, 35) / 100, 				// scale
+				modelindex, 											// model index
+				kRenderNormal, 											// rendermode
+				kRenderFxNoDissipation, 								// renderfx
+				gEngfuncs.pfnRandomFloat(0.25, 0.5), 					// alpha
+				0.01, 													// life
+				FTENT_SPRCYCLE | FTENT_FADEOUT);						// flags
+
+			if (pSmoke)
+			{
+				Vector angles;
+				VectorAngles(velocity, angles);
+
+				pSmoke->flags |= FTENT_CLIENTCUSTOM;
+				pSmoke->entity.curstate.framerate = 4;
+				pSmoke->entity.baseline.vuser1 = angles;
+				pSmoke->callback = EV_WallPuffCallback;
+			}
+#endif // defined ( EFTD_CLIENT_DLL )
 		}
 	}
 }
@@ -295,6 +338,14 @@ void EV_HLDM_DecalGunshot( pmtrace_t *pTrace, int iBulletType )
 		case BULLET_MONSTER_MP5:
 		case BULLET_PLAYER_BUCKSHOT:
 		case BULLET_PLAYER_357:
+#if defined ( EFTD_CLIENT_DLL )
+		case BULLET_PLAYER_AK47:
+		case BULLET_MONSTER_AK47:
+		case BULLET_MONSTER_HVMG:
+		case BULLET_PLAYER_MAC10:
+		case BULLET_MONSTER_MAC10:
+		case BULLET_PLAYER_SNIPER:
+#endif // defined ( EFTD_CLIENT_DLL )
 		default:
 			// smoke and decal
 			EV_HLDM_GunshotDecalTrace( pTrace, EV_HLDM_DamageDecal( pe ) );
@@ -337,6 +388,12 @@ int EV_HLDM_CheckTracer( int idx, float *vecSrc, float *end, float *forward, flo
 		case BULLET_MONSTER_MP5:
 		case BULLET_MONSTER_9MM:
 		case BULLET_MONSTER_12MM:
+#if defined ( EFTD_CLIENT_DLL )
+		case BULLET_PLAYER_AK47:
+		case BULLET_MONSTER_AK47:
+		case BULLET_MONSTER_HVMG:
+		case BULLET_MONSTER_MAC10:
+#endif // defined ( EFTD_CLIENT_DLL )
 		default:
 			EV_CreateTracer( vecTracerSrc, end );
 			break;
@@ -417,6 +474,10 @@ void EV_HLDM_FireBullets( int idx, float *forward, float *right, float *up, int 
 			
 					break;
 			case BULLET_PLAYER_MP5:		
+#if defined ( EFTD_CLIENT_DLL )
+			case BULLET_PLAYER_AK47:
+			case BULLET_PLAYER_MAC10:
+#endif // defined ( EFTD_CLIENT_DLL )
 				
 				if ( !tracer )
 				{
@@ -430,6 +491,9 @@ void EV_HLDM_FireBullets( int idx, float *forward, float *right, float *up, int 
 			
 				break;
 			case BULLET_PLAYER_357:
+#if defined ( EFTD_CLIENT_DLL )
+			case BULLET_PLAYER_SNIPER:
+#endif // defined ( EFTD_CLIENT_DLL )
 				
 				EV_HLDM_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
 				EV_HLDM_DecalGunshot( &tr, iBulletType );
@@ -1289,6 +1353,43 @@ void EV_FireCrossbow2( event_args_t *args )
 //TODO: Fully predict the fliying bolt.
 void EV_FireCrossbow( event_args_t *args )
 {
+#if defined ( EFTD_CLIENT_DLL )
+	int idx;
+	vec3_t origin;
+	vec3_t angles;
+	vec3_t velocity;
+
+	vec3_t vecSrc, vecAiming;
+	vec3_t up, right, forward;
+
+	idx = args->entindex;
+	VectorCopy( args->origin, origin );
+	VectorCopy( args->angles, angles );
+	VectorCopy( args->velocity, velocity );
+
+	AngleVectors( angles, forward, right, up );
+
+	if ( EV_IsLocal( idx ) )
+	{
+		// Add muzzle flash to current weapon model
+		EV_MuzzleFlash();
+
+		if ( args->iparam1 )
+			gEngfuncs.pEventAPI->EV_WeaponAnimation( CROSSBOW_FIRE1, 1 );
+		else if ( args->iparam2 )
+			gEngfuncs.pEventAPI->EV_WeaponAnimation( CROSSBOW_FIRE3, 1 );
+
+		V_PunchAxis( 0, -2.0 );
+	}
+
+	gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/xbow_fire1.wav", 1, ATTN_NORM, 0, 93 + gEngfuncs.pfnRandomLong(0, 0xF));
+
+	EV_GetGunPosition( args, vecSrc, origin );
+	
+	VectorCopy( forward, vecAiming );
+
+	EV_HLDM_FireBullets( idx, forward, right, up, 1, vecSrc, vecAiming, 8192, BULLET_PLAYER_SNIPER, 0, 0, args->fparam1, args->fparam2 );
+#else
 	int idx;
 	vec3_t origin;
 
@@ -1308,6 +1409,7 @@ void EV_FireCrossbow( event_args_t *args )
 
 		V_PunchAxis( 0, -2.0 );
 	}
+#endif // defined ( EFTD_CLIENT_DLL )
 }
 //======================
 //	   CROSSBOW END 
@@ -1702,3 +1804,168 @@ int EV_TFC_IsAllyTeam( int iTeam1, int iTeam2 )
 {
 	return 0;
 }
+#if defined ( EFTD_CLIENT_DLL )
+//======================
+//	   AK47 START
+//======================
+
+enum ak47_e
+{
+	AK47_LONGIDLE = 0,
+	AK47_IDLE1,
+	AK47_LAUNCH,
+	AK47_RELOAD,
+	AK47_DEPLOY,
+	AK47_FIRE1,
+	AK47_FIRE2,
+	AK47_FIRE3,
+};
+
+void EV_FireAK47(struct event_args_s *args)
+{
+	int idx;
+	vec3_t origin;
+	vec3_t angles;
+	vec3_t velocity;
+
+	vec3_t ShellVelocity;
+	vec3_t ShellOrigin;
+	int shell;
+	vec3_t vecSrc, vecAiming;
+	vec3_t up, right, forward;
+	float flSpread = 0.01;
+
+	idx = args->entindex;
+	VectorCopy(args->origin, origin);
+	VectorCopy(args->angles, angles);
+	VectorCopy(args->velocity, velocity);
+
+	AngleVectors(angles, forward, right, up);
+
+	shell = gEngfuncs.pEventAPI->EV_FindModelIndex("models/shell.mdl");// brass shell
+
+	if (EV_IsLocal(idx))
+	{
+		// Add muzzle flash to current weapon model
+		EV_MuzzleFlash();
+		gEngfuncs.pEventAPI->EV_WeaponAnimation(AK47_FIRE1 + gEngfuncs.pfnRandomLong(0, 2), 2);
+
+		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
+	}
+
+	EV_GetDefaultShellInfo(args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4);
+
+	EV_EjectBrass(ShellOrigin, ShellVelocity, angles[YAW], shell, TE_BOUNCE_SHELL);
+
+	switch (gEngfuncs.pfnRandomLong(0, 2))
+	{
+	case 0:
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/ak1.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		break;
+	case 1:
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/ak2.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		break;
+	case 2:
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/ak3.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		break;
+	}
+
+	EV_GetGunPosition(args, vecSrc, origin);
+	VectorCopy(forward, vecAiming);
+
+	if (gEngfuncs.GetMaxClients() > 1)
+	{
+		EV_HLDM_FireBullets(idx, forward, right, up, 1, vecSrc, vecAiming, 8192, BULLET_PLAYER_AK47, 2, &tracerCount[idx - 1], args->fparam1, args->fparam2);
+	}
+	else
+	{
+		EV_HLDM_FireBullets(idx, forward, right, up, 1, vecSrc, vecAiming, 8192, BULLET_PLAYER_AK47, 2, &tracerCount[idx - 1], args->fparam1, args->fparam2);
+	}
+}
+
+//======================
+//	   AK47 END
+//======================
+
+//======================
+//	   MAC10 START
+//======================
+
+enum mac10_e
+{
+	MAC10_LONGIDLE = 0,
+	MAC10_IDLE1,
+	MAC10_LAUNCH,
+	MAC10_RELOAD,
+	MAC10_DEPLOY,
+	MAC10_FIRE1,
+	MAC10_FIRE2,
+	MAC10_FIRE3,
+};
+
+void EV_FireMac10(struct event_args_s *args)
+{
+	int idx;
+	vec3_t origin;
+	vec3_t angles;
+	vec3_t velocity;
+
+	vec3_t ShellVelocity;
+	vec3_t ShellOrigin;
+	int shell;
+	vec3_t vecSrc, vecAiming;
+	vec3_t up, right, forward;
+	float flSpread = 0.01;
+
+	idx = args->entindex;
+	VectorCopy(args->origin, origin);
+	VectorCopy(args->angles, angles);
+	VectorCopy(args->velocity, velocity);
+
+	AngleVectors(angles, forward, right, up);
+
+	shell = gEngfuncs.pEventAPI->EV_FindModelIndex("models/shell.mdl");// brass shell
+
+	if (EV_IsLocal(idx))
+	{
+		// Add muzzle flash to current weapon model
+		EV_MuzzleFlash();
+		gEngfuncs.pEventAPI->EV_WeaponAnimation(MAC10_FIRE1 + gEngfuncs.pfnRandomLong(0, 2), 2);
+
+		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
+	}
+
+	EV_GetDefaultShellInfo(args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4);
+
+	EV_EjectBrass(ShellOrigin, ShellVelocity, angles[YAW], shell, TE_BOUNCE_SHELL);
+
+	switch (gEngfuncs.pfnRandomLong(0, 2))
+	{
+	case 0:
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/mac1.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		break;
+	case 1:
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/mac2.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		break;
+	case 2:
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/mac3.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		break;
+	}
+
+	EV_GetGunPosition(args, vecSrc, origin);
+	VectorCopy(forward, vecAiming);
+
+	if (gEngfuncs.GetMaxClients() > 1)
+	{
+		EV_HLDM_FireBullets(idx, forward, right, up, 1, vecSrc, vecAiming, 8192, BULLET_PLAYER_MAC10, 2, &tracerCount[idx - 1], args->fparam1, args->fparam2);
+	}
+	else
+	{
+		EV_HLDM_FireBullets(idx, forward, right, up, 1, vecSrc, vecAiming, 8192, BULLET_PLAYER_MAC10, 2, &tracerCount[idx - 1], args->fparam1, args->fparam2);
+	}
+}
+
+//======================
+//	   MAC10 END
+//======================
+#endif // defined ( EFTD_CLIENT_DLL )

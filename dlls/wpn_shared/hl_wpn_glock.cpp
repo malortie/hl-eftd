@@ -89,22 +89,84 @@ int CGlock::GetItemInfo(ItemInfo *p)
 
 BOOL CGlock::Deploy( )
 {
+#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
+	BOOL bResult = DefaultDeploy( "models/v_9mmhandgun.mdl", "models/p_9mmhandgun.mdl", GLOCK_DRAW, "onehanded", /*UseDecrement() ? 1 : 0*/ 0 );
+
+	if ( bResult )
+	{
+		m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.85f;
+		m_fInAttack = 0;
+	}
+
+	return bResult;
+#else
 	// pev->body = 1;
 	return DefaultDeploy( "models/v_9mmhandgun.mdl", "models/p_9mmhandgun.mdl", GLOCK_DRAW, "onehanded", /*UseDecrement() ? 1 : 0*/ 0 );
+#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 }
 
+#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
+void CGlock::Holster(int skiplocal /*= 0*/)
+{
+	m_fInReload = FALSE;// cancel any reload in progress.
+
+	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
+	SendWeaponAnim( GLOCK_HOLSTER );
+
+	m_fInAttack = 0;
+}
+#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 void CGlock::SecondaryAttack( void )
 {
+#if !defined ( EFTD_DLL ) && !defined ( EFTD_CLIENT_DLL )
 	GlockFire( 0.1, 0.2, FALSE );
+#endif // !defined ( EFTD_DLL ) && !defined ( EFTD_CLIENT_DLL )
 }
 
 void CGlock::PrimaryAttack( void )
 {
+#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
+	float flSpread;
+
+	// Allow for higher accuracy when the player is crouching.
+	if (m_pPlayer->pev->flags & FL_DUCKING)
+	{
+		flSpread = 0.00873;
+	}
+	else
+	{
+		flSpread = 0.03490;
+	}
+
+	GlockFire(flSpread, 0.2, TRUE);
+#else
 	GlockFire( 0.01, 0.3, TRUE );
+#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 }
 
 void CGlock::GlockFire( float flSpread , float flCycleTime, BOOL fUseAutoAim )
 {
+#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
+	// Do not allow attack unless primary attack key was released.
+	if (m_fInAttack)
+		return;
+
+	if (m_iClip <= 0)
+	{
+		if (!m_fFireOnEmpty)
+			Reload( );
+		else
+		{
+			EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/357_cock1.wav", 0.8, ATTN_NORM);
+			m_flNextPrimaryAttack = GetNextAttackDelay(0.2);
+		}
+
+		return;
+	}
+
+	// Prevent from continuously refire.
+	m_fInAttack = 1;
+#else
 	if (m_iClip <= 0)
 	{
 		if (m_fFireOnEmpty)
@@ -115,6 +177,7 @@ void CGlock::GlockFire( float flSpread , float flCycleTime, BOOL fUseAutoAim )
 
 		return;
 	}
+#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 
 	m_iClip--;
 
@@ -178,14 +241,25 @@ void CGlock::Reload( void )
 
 	int iResult;
 
+#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
+	if (m_iClip == 0)
+		iResult = DefaultReload( GLOCK_MAX_CLIP, GLOCK_RELOAD, 2.2 );
+	else
+		iResult = DefaultReload( GLOCK_MAX_CLIP, GLOCK_RELOAD_NOT_EMPTY, 2.2 );
+#else
 	if (m_iClip == 0)
 		iResult = DefaultReload( 17, GLOCK_RELOAD, 1.5 );
 	else
 		iResult = DefaultReload( 17, GLOCK_RELOAD_NOT_EMPTY, 1.5 );
+#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 
 	if (iResult)
 	{
 		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + UTIL_SharedRandomFloat( m_pPlayer->random_seed, 10, 15 );
+#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
+		// Unblock primary attack.
+		m_fInAttack = 0;
+#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 	}
 }
 
@@ -197,6 +271,13 @@ void CGlock::WeaponIdle( void )
 
 	m_pPlayer->GetAutoaimVector( AUTOAIM_10DEGREES );
 
+#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
+	//
+	// Unblock primary attack.
+	// This will only occur if players released primary attack key.
+	//
+	m_fInAttack = 0;
+#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 	if ( m_flTimeWeaponIdle > UTIL_WeaponTimeBase() )
 		return;
 
@@ -206,6 +287,23 @@ void CGlock::WeaponIdle( void )
 		int iAnim;
 		float flRand = UTIL_SharedRandomFloat( m_pPlayer->random_seed, 0.0, 1.0 );
 
+#if defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
+		if (flRand <= 0.3 + 0 * 0.75)
+		{
+			iAnim = GLOCK_IDLE3;
+			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 50.0 / 18.0;
+		}
+		else if (flRand <= 0.6 + 0 * 0.875)
+		{
+			iAnim = GLOCK_IDLE1;
+			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 50.0 / 18.0;
+		}
+		else
+		{
+			iAnim = GLOCK_IDLE2;
+			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 50.0 / 26.0;
+		}
+#else
 		if (flRand <= 0.3 + 0 * 0.75)
 		{
 			iAnim = GLOCK_IDLE3;
@@ -221,6 +319,7 @@ void CGlock::WeaponIdle( void )
 			iAnim = GLOCK_IDLE2;
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 40.0 / 16.0;
 		}
+#endif // defined ( EFTD_DLL ) || defined ( EFTD_CLIENT_DLL )
 		SendWeaponAnim( iAnim, 1 );
 	}
 }

@@ -55,6 +55,9 @@
     <Filter Include="Source Files\_hl\cl_dll\hl">
       <UniqueIdentifier>{bd9d5958-4e67-4bff-bbd8-6ba6dfcdb720}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\_hl\dlls\eftd">
+      <UniqueIdentifier>{59cdf4c7-4311-45dd-bfb7-10553188728b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dlls\crossbow.cpp">
@@ -63,14 +66,8 @@
     <ClCompile Include="..\..\dlls\crowbar.cpp">
       <Filter>Source Files\_hl\dlls</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\dlls\egon.cpp">
-      <Filter>Source Files\_hl\dlls</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\cl_dll\ev_hldm.cpp">
       <Filter>Source Files\_hl\cl_dll</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\dlls\gauss.cpp">
-      <Filter>Source Files\_hl\dlls</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dlls\handgrenade.cpp">
       <Filter>Source Files\_hl\dlls</Filter>
@@ -93,13 +90,7 @@
     <ClCompile Include="..\..\dlls\squeakgrenade.cpp">
       <Filter>Source Files\_hl\dlls</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\dlls\hornetgun.cpp">
-      <Filter>Source Files\_hl\dlls</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\dlls\mp5.cpp">
-      <Filter>Source Files\_hl\dlls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\dlls\python.cpp">
       <Filter>Source Files\_hl\dlls</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dlls\rpg.cpp">
@@ -305,6 +296,12 @@
     </ClCompile>
     <ClCompile Include="..\..\public\interface.cpp">
       <Filter>Source Files\public</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\eftd\ak47.cpp">
+      <Filter>Source Files\_hl\dlls\eftd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\eftd\mac10.cpp">
+      <Filter>Source Files\_hl\dlls\eftd</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

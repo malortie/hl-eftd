@@ -34,6 +34,9 @@
     <Filter Include="Header Files\pm_shared">
       <UniqueIdentifier>{37941113-16fa-4ce0-9bdd-a72a1ced8902}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\dlls\eftd">
+      <UniqueIdentifier>{483903e7-b416-464d-97d5-530e11747bc8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dlls\aflock.cpp">
@@ -105,9 +108,6 @@
     <ClCompile Include="..\..\dlls\effects.cpp">
       <Filter>Source Files\dlls</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\dlls\egon.cpp">
-      <Filter>Source Files\dlls</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\dlls\explode.cpp">
       <Filter>Source Files\dlls</Filter>
     </ClCompile>
@@ -127,9 +127,6 @@
       <Filter>Source Files\dlls</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dlls\gargantua.cpp">
-      <Filter>Source Files\dlls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\dlls\gauss.cpp">
       <Filter>Source Files\dlls</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dlls\genericmonster.cpp">
@@ -178,9 +175,6 @@
       <Filter>Source Files\dlls</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dlls\hornet.cpp">
-      <Filter>Source Files\dlls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\dlls\hornetgun.cpp">
       <Filter>Source Files\dlls</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dlls\houndeye.cpp">
@@ -251,9 +245,6 @@
     </ClCompile>
     <ClCompile Include="..\..\pm_shared\pm_math.c">
       <Filter>Source Files\pm_shared</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\dlls\python.cpp">
-      <Filter>Source Files\dlls</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dlls\rat.cpp">
       <Filter>Source Files\dlls</Filter>
@@ -341,6 +332,18 @@
     </ClCompile>
     <ClCompile Include="..\..\dlls\xen.cpp">
       <Filter>Source Files\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\eftd\ak47.cpp">
+      <Filter>Source Files\dlls\eftd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\eftd\diablo.cpp">
+      <Filter>Source Files\dlls\eftd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\eftd\hassault.cpp">
+      <Filter>Source Files\dlls\eftd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\eftd\mac10.cpp">
+      <Filter>Source Files\dlls\eftd</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

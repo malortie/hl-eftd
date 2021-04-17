@@ -449,22 +449,22 @@ cvar_t	sk_player_leg2	= { "sk_player_leg2","1" };
 cvar_t	sk_player_leg3	= { "sk_player_leg3","1" };
 
 // Diablo
-cvar_t	sk_diablo_health1 = { "sk_diablo_health1", "0" };
-cvar_t	sk_diablo_health2 = { "sk_diablo_health2", "0" };
-cvar_t	sk_diablo_health3 = { "sk_diablo_health3", "0" };
+cvar_t	sk_diablo_health1 = { "sk_diablo_health1", "140" };
+cvar_t	sk_diablo_health2 = { "sk_diablo_health2", "140" };
+cvar_t	sk_diablo_health3 = { "sk_diablo_health3", "160" };
 
-cvar_t	sk_diablo_dmg_one_slash1 = { "sk_diablo_dmg_one_slash1", "0" };
-cvar_t	sk_diablo_dmg_one_slash2 = { "sk_diablo_dmg_one_slash2", "0" };
-cvar_t	sk_diablo_dmg_one_slash3 = { "sk_diablo_dmg_one_slash3", "0" };
+cvar_t	sk_diablo_dmg_one_slash1 = { "sk_diablo_dmg_one_slash1", "20" };
+cvar_t	sk_diablo_dmg_one_slash2 = { "sk_diablo_dmg_one_slash2", "40" };
+cvar_t	sk_diablo_dmg_one_slash3 = { "sk_diablo_dmg_one_slash3", "40" };
 
-cvar_t	sk_diablo_dmg_both_slash1 = { "sk_diablo_dmg_both_slash1", "0" };
-cvar_t	sk_diablo_dmg_both_slash2 = { "sk_diablo_dmg_both_slash2", "0" };
-cvar_t	sk_diablo_dmg_both_slash3 = { "sk_diablo_dmg_both_slash3", "0" };
+cvar_t	sk_diablo_dmg_both_slash1 = { "sk_diablo_dmg_both_slash1", "50" };
+cvar_t	sk_diablo_dmg_both_slash2 = { "sk_diablo_dmg_both_slash2", "80" };
+cvar_t	sk_diablo_dmg_both_slash3 = { "sk_diablo_dmg_both_slash3", "80" };
 
 // Hassault
-cvar_t	sk_hassault_health1 = { "sk_hassault_health1", "0" };
-cvar_t	sk_hassault_health2 = { "sk_hassault_health2", "0" };
-cvar_t	sk_hassault_health3 = { "sk_hassault_health3", "0" };
+cvar_t	sk_hassault_health1 = { "sk_hassault_health1", "50" };
+cvar_t	sk_hassault_health2 = { "sk_hassault_health2", "50" };
+cvar_t	sk_hassault_health3 = { "sk_hassault_health3", "80" };
 
 // AK47 Round
 cvar_t	sk_plr_ak47_bullet1 = { "sk_plr_ak47_bullet1", "0" };
@@ -477,9 +477,9 @@ cvar_t	sk_plr_mac10_bullet2 = { "sk_plr_mac10_bullet2", "0" };
 cvar_t	sk_plr_mac10_bullet3 = { "sk_plr_mac10_bullet3", "0" };
 
 // Heavy machine gun round
-cvar_t	sk_hvmg_bullet1 = { "sk_hvmg_bullet1", "0" };
-cvar_t	sk_hvmg_bullet2 = { "sk_hvmg_bullet2", "0" };
-cvar_t	sk_hvmg_bullet3 = { "sk_hvmg_bullet3", "0" };
+cvar_t	sk_hvmg_bullet1 = { "sk_hvmg_bullet1", "12" };
+cvar_t	sk_hvmg_bullet2 = { "sk_hvmg_bullet2", "12" };
+cvar_t	sk_hvmg_bullet3 = { "sk_hvmg_bullet3", "12" };
 
 // Grunt Mac10
 cvar_t	sk_mac10_bullet1 = { "sk_mac10_bullet1", "0" };

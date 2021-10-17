@@ -1200,6 +1200,8 @@ void CHGrunt :: Spawn()
 		SetBodygroup(HEAD_GROUP, HEAD_ARCTIC);
 	}
 
+	m_cAmmoLoaded		= m_cClipSize;
+
 	CTalkMonster::g_talkWaitTime = 0;
 
 	MonsterInit();

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [eftd/1.0.2] - 2021-10-17
+
+### Fixed
+
+- Grunts having no ammo loaded on spawn
+
 ## [eftd/1.0.1] - 2021-04-17
 
 ### Added

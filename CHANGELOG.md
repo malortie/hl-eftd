@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [eftd/1.0.2] - 2021-10-17
 
+### Added
+
+- CMake support
+
 ### Fixed
 
 - Grunts having no ammo loaded on spawn

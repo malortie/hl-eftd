@@ -47,6 +47,7 @@ set(LINK_OPTS_RELEASE
 # Include directories
 set(INCLUDE_DIRS 
   ${DLLS_DIR}
+  ${DLLS_DIR}/eftd
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${PUBLIC_DIR}
   ${COMMON_DIR}
@@ -163,12 +164,12 @@ set(SOURCE_FILES
   ${COMMON_DIR}/parsemsg.cpp
   ${DLLS_DIR}/crossbow.cpp
   ${DLLS_DIR}/crowbar.cpp
-  ${DLLS_DIR}/egon.cpp
-  ${DLLS_DIR}/gauss.cpp
+#  ${DLLS_DIR}/egon.cpp
+#  ${DLLS_DIR}/gauss.cpp
   ${DLLS_DIR}/handgrenade.cpp
-  ${DLLS_DIR}/hornetgun.cpp
+#  ${DLLS_DIR}/hornetgun.cpp
   ${DLLS_DIR}/mp5.cpp
-  ${DLLS_DIR}/python.cpp
+#  ${DLLS_DIR}/python.cpp
   ${DLLS_DIR}/rpg.cpp
   ${DLLS_DIR}/satchel.cpp
   ${DLLS_DIR}/shotgun.cpp
@@ -184,6 +185,8 @@ set(SOURCE_FILES
   ${GAME_SHARED_DIR}/vgui_slider2.cpp
   ${GAME_SHARED_DIR}/voice_banmgr.cpp
   ${PUBLIC_DIR}/interface.cpp
+  ${DLLS_DIR}/eftd/ak47.cpp
+  ${DLLS_DIR}/eftd/mac10.cpp
 )
 
 set(PM_SHARED_SOURCE_FILES

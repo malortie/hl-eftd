@@ -50,6 +50,7 @@ set(LINK_OPTS_RELEASE
 # Include directories
 set(INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/eftd
   ${ENGINE_DIR}
   ${COMMON_DIR}
   ${PM_SHARED_DIR}
@@ -131,7 +132,7 @@ set(SOURCE_FILES
   defaultai.cpp
   doors.cpp
   effects.cpp
-  egon.cpp
+#  egon.cpp
   explode.cpp
   flyingmonster.cpp
   func_break.cpp
@@ -139,7 +140,7 @@ set(SOURCE_FILES
   game.cpp
   gamerules.cpp
   gargantua.cpp
-  gauss.cpp
+#  gauss.cpp
   genericmonster.cpp
   ggrenade.cpp
   globals.cpp
@@ -150,7 +151,7 @@ set(SOURCE_FILES
   healthkit.cpp
   hgrunt.cpp
   hornet.cpp
-  hornetgun.cpp
+#  hornetgun.cpp
   houndeye.cpp
   h_ai.cpp
   h_battery.cpp
@@ -177,7 +178,7 @@ set(SOURCE_FILES
   plane.cpp
   plats.cpp
   player.cpp
-  python.cpp
+#  python.cpp
   rat.cpp
   roach.cpp
   rpg.cpp
@@ -208,6 +209,10 @@ set(SOURCE_FILES
   xen.cpp
   zombie.cpp
   ${GAME_SHARED_DIR}/voice_gamemgr.cpp
+  eftd/ak47.cpp
+  eftd/diablo.cpp
+  eftd/hassault.cpp
+  eftd/mac10.cpp
 )
 
 set(PM_SHARED_SOURCE_FILES

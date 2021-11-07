@@ -7,27 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [eftd/1.0.2] - 2021-10-17
+## [1.0.1] - 2021-11-07
 
 ### Added
 
 - CMake support
 
-### Fixed
-
-- Grunts having no ammo loaded on spawn
-
-## [eftd/1.0.1] - 2021-04-17
-
-### Added
-
-- Visual Studio 2019 project files
-
 ### Changed
 
 - Diablo and Human assault cvars are now set by default to values from skill.cfg from Steampipe patch
 
-## [eftd/1.0.0] - 2016-01-21
+### Fixed
+
+- Grunts having no ammo loaded on spawn
+
+## [1.0.0] - 2016-01-21
 
 ### Added
 
